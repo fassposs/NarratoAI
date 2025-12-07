@@ -31,11 +31,11 @@ class VideoAspect(Enum):
         if self == VideoAspect.portrait:
             return 1080, 1920  # 竖屏 9:16
         elif self == VideoAspect.portrait_2:
-            return 720, 1280   # 竖屏 4:3
+            return 1080, 1440   # 竖屏 3:4
         elif self == VideoAspect.landscape:
             return 1920, 1080  # 横屏 16:9
         elif self == VideoAspect.landscape_2:
-            return 1280, 720   # 横屏 4:3
+            return 1440, 1080   # 横屏 4:3
         elif self == VideoAspect.square:
             return 1080, 1080  # 方形 1:1
         else:

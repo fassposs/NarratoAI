@@ -16,6 +16,9 @@ def render_video_config(tr, params):
     video_aspect_ratios = [
         (tr("Portrait"), VideoAspect.portrait.value),
         (tr("Landscape"), VideoAspect.landscape.value),
+        (tr("Portrait2"), VideoAspect.portrait_2.value),
+        (tr("Landscape2"), VideoAspect.landscape_2.value),
+        (tr("Square"), VideoAspect.square.value),
     ]
     selected_index = st.selectbox(
         tr("Video Ratio"),
