@@ -6,7 +6,7 @@ from app.config import config
 from app.utils import utils
 from app.utils import ffmpeg_utils
 from webui.components import basic_settings, video_settings, audio_settings, subtitle_settings, script_settings, \
-    system_settings
+    system_settings,del_video_subtitle
 from app.models.schema import VideoClipParams
 
 logger = init_log()
@@ -18,15 +18,6 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="auto"
 )
-
-with st.sidebar:
-    selected = option_menu(
-        menu_title="",  # 菜单标题（可选）
-        options=["首页", "基础设置", "视频生成", "视频去掉字幕", ],  # 菜单项列表
-        icons=["house", "gear", "bar-chart", "info-circle"],  # 图标列表（可选）
-        default_index=0,  # 默认选中项索引
-    )
-
 
 def init_global_state():
     """初始化全局状态"""
@@ -146,6 +137,14 @@ def main():
     """主函数"""
     init_global_state()
 
+    with st.sidebar:
+        selected = option_menu(
+            menu_title="",  # 菜单标题（可选）
+            options=["首页", "基础设置", "视频生成", "视频去掉字幕", ],  # 菜单项列表
+            icons=["house", "gear", "bar-chart", "info-circle"],  # 图标列表（可选）
+            default_index=0,  # 默认选中项索引
+        )
+
     # ===== 显式注册 LLM 提供商（最佳实践）=====
     # 在应用启动时立即注册，确保所有 LLM 功能可用
     if 'llm_providers_registered' not in st.session_state:
@@ -210,7 +209,9 @@ def main():
 
         # 放到最后渲染生成按钮和处理逻辑
         render_generate_button()
-
+    elif selected == "视频去掉字幕":
+        st.title("去掉视频字幕")
+        del_video_subtitle.render_del_video_subtitle_panel()
 
 if __name__ == "__main__":
     main()

@@ -3,11 +3,13 @@ from .script_settings import render_script_panel
 from .video_settings import render_video_panel
 from .audio_settings import render_audio_panel
 from .subtitle_settings import render_subtitle_panel
+from .del_video_subtitle import render_del_video_subtitle_panel
 
 __all__ = [
     'render_basic_settings',
     'render_script_panel',
     'render_video_panel',
     'render_audio_panel',
-    'render_subtitle_panel'
+    'render_subtitle_panel',
+    'render_del_video_subtitle_panel'
 ]
