@@ -14,10 +14,11 @@ from webui.tools.generate_script_short import generate_script_short
 from webui.tools.generate_short_summary import generate_script_short_sunmmary
 
 
+# 视频脚本配置
 def render_script_panel(tr):
     """渲染脚本配置面板"""
     with st.container(border=True):
-        st.write(tr("Video Script Configuration"))
+        st.write("视频脚本配置")
         params = VideoClipParams()
 
         # 渲染脚本文件选择
@@ -31,7 +32,7 @@ def render_script_panel(tr):
 
         # 根据脚本类型显示不同的布局
         if script_path == "auto":
-            # 画面解说
+            # 逐帧解说
             render_video_details(tr)
         elif script_path == "short":
             # 短剧混剪
@@ -47,6 +48,7 @@ def render_script_panel(tr):
         render_script_buttons(tr, params)
 
 
+# 渲染脚本文件路径
 def render_script_file(tr, params):
     """渲染脚本文件选择"""
     # 定义功能模式
@@ -57,32 +59,32 @@ def render_script_file(tr, params):
 
     # 模式选项映射
     mode_options = {
-        tr("Select/Upload Script"): MODE_FILE,
-        tr("Auto Generate"): MODE_AUTO,
-        tr("Short Generate"): MODE_SHORT,
-        tr("Short Drama Summary"): MODE_SUMMARY,
+        "选择/上传脚本": MODE_FILE,
+        "逐帧解说": MODE_AUTO,
+        "短剧混剪": MODE_SHORT,
+        "短剧解说": MODE_SUMMARY,
     }
-    
-    # 获取当前状态
+
+    # 获取当前脚本路径
     current_path = st.session_state.get('video_clip_json_path', '')
-    
+
     # 确定当前选中的模式索引
     default_index = 0
     mode_keys = list(mode_options.keys())
-    
+
     if current_path == "auto":
-        default_index = mode_keys.index(tr("Auto Generate"))
+        default_index = mode_keys.index("逐帧解说")
     elif current_path == "short":
-        default_index = mode_keys.index(tr("Short Generate"))
+        default_index = mode_keys.index("短剧混剪")
     elif current_path == "summary":
-        default_index = mode_keys.index(tr("Short Drama Summary"))
+        default_index = mode_keys.index("短剧解说")
     else:
-        default_index = mode_keys.index(tr("Select/Upload Script"))
+        default_index = mode_keys.index("选择/上传脚本")
 
     # 1. 渲染功能选择下拉框
     # 使用 segmented_control 替代 selectbox，提供更好的视觉体验
     default_mode_label = mode_keys[default_index]
-    
+
     # 定义回调函数来处理状态更新
     def update_script_mode():
         # 获取当前选中的标签
@@ -99,25 +101,25 @@ def render_script_file(tr, params):
 
     # 渲染组件
     selected_mode_label = st.segmented_control(
-        tr("Video Type"),
+        "视频类型",
         options=mode_keys,
         default=default_mode_label,
         key="script_mode_selection",
         on_change=update_script_mode
     )
-    
+
     # 处理未选择的情况（虽然有default，但在某些交互下可能为空）
     if not selected_mode_label:
         selected_mode_label = default_mode_label
-        
+
     selected_mode = mode_options[selected_mode_label]
 
     # 2. 根据选择的模式处理逻辑
     if selected_mode == MODE_FILE:
         # --- 文件选择模式 ---
         script_list = [
-            (tr("None"), ""),
-            (tr("Upload Script"), "upload_script")
+            ("--", ""),
+            ("上传本地文件", "upload_script")
         ]
 
         # 获取已有脚本文件
@@ -141,7 +143,7 @@ def render_script_file(tr, params):
         # 找到保存的脚本文件在列表中的索引
         # 如果当前path是特殊值(auto/short/summary)，则重置为空
         saved_script_path = current_path if current_path not in [MODE_AUTO, MODE_SHORT, MODE_SUMMARY] else ""
-        
+
         selected_index = 0
         for i, (_, path) in enumerate(script_list):
             if path == saved_script_path:
@@ -149,7 +151,7 @@ def render_script_file(tr, params):
                 break
 
         selected_script_index = st.selectbox(
-            tr("Script Files"),
+            "脚本文件",
             index=selected_index,
             options=range(len(script_list)),
             format_func=lambda x: script_list[x][0],
@@ -163,7 +165,7 @@ def render_script_file(tr, params):
         # 处理脚本上传
         if script_path == "upload_script":
             uploaded_file = st.file_uploader(
-                tr("Upload Script File"),
+                "上传本地文件",
                 type=["json"],
                 accept_multiple_files=False,
             )
@@ -205,9 +207,10 @@ def render_script_file(tr, params):
         params.video_clip_json_path = selected_mode
 
 
+# 渲染视频文件路径
 def render_video_file(tr, params):
     """渲染视频文件选择"""
-    video_list = [(tr("None"), ""), (tr("Upload Local Files"), "upload_local")]
+    video_list = [("--", ""), ("上传本地文件", "upload_local")]
 
     # 获取已有视频文件
     for suffix in ["*.mp4", "*.mov", "*.avi", "*.mkv"]:
@@ -217,7 +220,7 @@ def render_video_file(tr, params):
             video_list.append((display_name, file))
 
     selected_video_index = st.selectbox(
-        tr("Video File"),
+        "视频文件（1️⃣支持上传视频文件(限制2G) 2️⃣大文件建议直接导入 ./resource/videos 目录）",
         index=0,
         options=range(len(video_list)),
         format_func=lambda x: video_list[x][0]
@@ -229,7 +232,7 @@ def render_video_file(tr, params):
 
     if video_path == "upload_local":
         uploaded_file = st.file_uploader(
-            tr("Upload Local Files"),
+            "上传本地文件",
             type=["mp4", "mov", "avi", "flv", "mkv"],
             accept_multiple_files=False,
         )
@@ -270,13 +273,14 @@ def render_short_generate_options(tr):
     st.session_state['custom_clips'] = custom_clips
 
 
+# 逐帧解说
 def render_video_details(tr):
     """画面解说 渲染视频主题和提示词"""
-    video_theme = st.text_input(tr("Video Theme"))
+    video_theme = st.text_input("视频主题")
     custom_prompt = st.text_area(
-        tr("Generation Prompt"),
+        "自定义提示词",
         value=st.session_state.get('video_plot', ''),
-        help=tr("Custom prompt for LLM, leave empty to use default prompt"),
+        help="自定义提示词，留空则使用默认提示词",
         height=180
     )
     # 非短视频模式下显示原有的三个输入框
@@ -284,19 +288,19 @@ def render_video_details(tr):
 
     with input_cols[0]:
         st.number_input(
-            tr("Frame Interval (seconds)"),
+            "帧间隔 (秒)",
             min_value=0,
             value=st.session_state.get('frame_interval_input', config.frames.get('frame_interval_input', 3)),
-            help=tr("Frame Interval (seconds) (More keyframes consume more tokens)"),
+            help="帧间隔 (秒) (更多关键帧消耗更多令牌)",
             key="frame_interval_input"
         )
 
     with input_cols[1]:
         st.number_input(
-            tr("Batch Size"),
+            "批处理大小",
             min_value=0,
             value=st.session_state.get('vision_batch_size', config.frames.get('vision_batch_size', 10)),
-            help=tr("Batch Size (More keyframes consume more tokens)"),
+            help="批处理大小, 每批处理越少消耗 token 越多",
             key="vision_batch_size"
         )
     st.session_state['video_theme'] = video_theme
@@ -309,14 +313,14 @@ def short_drama_summary(tr):
     # 检查是否已经处理过字幕文件
     if 'subtitle_file_processed' not in st.session_state:
         st.session_state['subtitle_file_processed'] = False
-    
+
     subtitle_file = st.file_uploader(
         tr("上传字幕文件"),
         type=["srt"],
         accept_multiple_files=False,
         key="subtitle_file_uploader"  # 添加唯一key
     )
-    
+
     # 显示当前已上传的字幕文件路径
     if 'subtitle_path' in st.session_state and st.session_state['subtitle_path']:
         st.info(f"已上传字幕: {os.path.basename(st.session_state['subtitle_path'])}")
@@ -324,7 +328,7 @@ def short_drama_summary(tr):
             st.session_state['subtitle_path'] = None
             st.session_state['subtitle_file_processed'] = False
             st.rerun()
-    
+
     # 只有当有文件上传且尚未处理时才执行处理逻辑
     if subtitle_file is not None and not st.session_state['subtitle_file_processed']:
         try:
@@ -349,10 +353,10 @@ def short_drama_summary(tr):
             st.success(tr("字幕上传成功"))
             st.session_state['subtitle_path'] = script_file_path
             st.session_state['subtitle_file_processed'] = True  # 标记已处理
-            
+
             # 避免使用rerun，使用更新状态的方式
             # st.rerun()
-            
+
         except Exception as e:
             st.error(f"{tr('Upload failed')}: {str(e)}")
 
@@ -372,15 +376,15 @@ def render_script_buttons(tr, params):
 
     # 生成/加载按钮
     if script_path == "auto":
-        button_name = tr("Generate Video Script")
+        button_name = "AI生成画面解说脚本"
     elif script_path == "short":
-        button_name = tr("Generate Short Video Script")
+        button_name = "AI生成短剧混剪脚本"
     elif script_path == "summary":
         button_name = tr("生成短剧解说脚本")
     elif script_path.endswith("json"):
         button_name = tr("Load Video Script")
     else:
-        button_name = tr("Please Select Script File")
+        button_name = "请选择脚本文件"
 
     if st.button(button_name, key="script_action", disabled=not script_path):
         if script_path == "auto":

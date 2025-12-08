@@ -508,7 +508,7 @@ class VideoProcessor:
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
 
-        # 计算起始时间和帧提取点
+        # 计算起始时间和帧提取点,保存的是提取时间
         start_time = 0
         end_time = self.duration
         extraction_times = []
@@ -532,6 +532,7 @@ class VideoProcessor:
         with tqdm(total=len(extraction_times), desc="🎬 提取关键帧", unit="帧", 
                  bar_format="{l_bar}{bar}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}, {rate_fmt}]") as pbar:
             for i, timestamp in enumerate(extraction_times):
+                # 得到的是哪一帧
                 frame_number = int(timestamp * self.fps)
                 frame_numbers.append(frame_number)
 
@@ -542,6 +543,7 @@ class VideoProcessor:
                 milliseconds = int((timestamp % 1) * 1000)
                 time_str = f"{hours:02d}{minutes:02d}{seconds:02d}{milliseconds:03d}"
 
+                # 输出目录
                 output_path = os.path.join(output_dir, f"keyframe_{frame_number:06d}_{time_str}.jpg")
 
                 # 直接使用超级兼容性方案

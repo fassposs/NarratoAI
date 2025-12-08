@@ -158,9 +158,6 @@ class VideoParams(BaseModel):
     paragraph_number: Optional[int] = 1
 
 
-
-
-
 class VideoClipParams(BaseModel):
     """
     NarratoAI 数据模型
@@ -188,25 +185,21 @@ class VideoClipParams(BaseModel):
     subtitle_enabled: bool = True
     font_name: str = "SimHei"  # 默认使用黑体
     font_size: int = 36
-    text_fore_color: str = "white"              # 文本前景色
-    text_back_color: Optional[str] = None       # 文本背景色
-    stroke_color: str = "black"                 # 描边颜色
-    stroke_width: float = 1.5                   # 描边宽度
-    subtitle_position: str = "bottom"   # top, bottom, center, custom
-    custom_position: float = 70.0       # 自定义位置
+    text_fore_color: str = "white"  # 文本前景色
+    text_back_color: Optional[str] = None  # 文本背景色
+    stroke_color: str = "black"  # 描边颜色
+    stroke_width: float = 1.5  # 描边宽度
+    subtitle_position: str = "bottom"  # top, bottom, center, custom
+    custom_position: float = 70.0  # 自定义位置
 
-    n_threads: Optional[int] = Field(default=16, description="线程数")    # 线程数，有助于提升视频处理速度
+    n_threads: Optional[int] = Field(default=16, description="线程数")  # 线程数，有助于提升视频处理速度
 
     tts_volume: Optional[float] = Field(default=AudioVolumeDefaults.TTS_VOLUME, description="解说语音音量（后处理）")
     original_volume: Optional[float] = Field(default=AudioVolumeDefaults.ORIGINAL_VOLUME, description="视频原声音量")
     bgm_volume: Optional[float] = Field(default=AudioVolumeDefaults.BGM_VOLUME, description="背景音乐音量")
 
 
-
-
-
 class SubtitlePosition(str, Enum):
     TOP = "top"
     CENTER = "center"
     BOTTOM = "bottom"
-

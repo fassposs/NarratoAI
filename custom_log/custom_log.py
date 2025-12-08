@@ -1,5 +1,6 @@
-import os,sys
+import os, sys
 from app.config import config
+
 
 def init_log():
     """初始化日志配置"""
@@ -76,3 +77,5 @@ def init_log():
     # 将高级过滤器设置放到启动主逻辑后
     import threading
     threading.Timer(5.0, setup_advanced_filters).start()
+
+    return logger

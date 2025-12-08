@@ -123,7 +123,7 @@ def generate_script_docu(params):
             # 最佳实践：使用 get() 的默认值参数 + 从 config 获取备用值
             vision_llm_provider = (
                 st.session_state.get('vision_llm_provider') or
-                config.app.get('vision_llm_provider', 'litellm')
+                config.app.get('vision_llm_provider', 'gemini')
             ).lower()
 
             logger.info(f"使用 {vision_llm_provider.upper()} 进行视觉分析")
@@ -398,7 +398,10 @@ def generate_script_docu(params):
                     "text_model_name": text_model,
                     "text_base_url": text_base_url
                 })
-                chekc_video_config(llm_params)
+
+                # 可以注释掉
+                # chekc_video_config(llm_params)
+
                 # 整理帧分析数据
                 markdown_output = parse_frame_analysis_to_markdown(analysis_json_path)
 
