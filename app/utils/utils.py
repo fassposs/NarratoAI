@@ -334,7 +334,7 @@ def src_del_subtitle_video_dir(sub_dir: str = ""):
     return d
 
 def des_del_subtitle_video_dir(sub_dir: str = ""):
-    d = resource_dir(f"src_no_title_videos")
+    d = resource_dir(f"des_no_title_videos")
     if sub_dir:
         d = os.path.join(d, sub_dir)
     if not os.path.exists(d):

@@ -6,7 +6,7 @@ from app.config import config
 from app.utils import utils
 from app.utils import ffmpeg_utils
 from webui.components import basic_settings, video_settings, audio_settings, subtitle_settings, script_settings, \
-    system_settings,del_video_subtitle
+    system_settings, del_video_subtitle
 from app.models.schema import VideoClipParams
 
 logger = init_log()
@@ -18,6 +18,7 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="auto"
 )
+
 
 def init_global_state():
     """初始化全局状态"""
@@ -212,6 +213,7 @@ def main():
     elif selected == "视频去掉字幕":
         st.title("去掉视频字幕")
         del_video_subtitle.render_del_video_subtitle_panel()
+
 
 if __name__ == "__main__":
     main()
