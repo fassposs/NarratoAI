@@ -214,7 +214,7 @@ def format_time(seconds: float) -> str:
     remaining_seconds = remaining_seconds % 60
     secs = int(remaining_seconds)
     milliseconds = int((remaining_seconds - secs) * 1000)
-    
+
     # 格式化为时间字符串
     return "{:02d}:{:02d}:{:02d},{:03d}".format(hours, minutes, secs, milliseconds)
 
@@ -333,6 +333,7 @@ def src_del_subtitle_video_dir(sub_dir: str = ""):
         os.makedirs(d)
     return d
 
+
 def des_del_subtitle_video_dir(sub_dir: str = ""):
     d = resource_dir(f"des_no_title_videos")
     if sub_dir:
@@ -340,6 +341,16 @@ def des_del_subtitle_video_dir(sub_dir: str = ""):
     if not os.path.exists(d):
         os.makedirs(d)
     return d
+
+
+def record_video_dir(sub_dir: str = ""):
+    d = resource_dir(f"download_videos")
+    if sub_dir:
+        d = os.path.join(d, sub_dir)
+    if not os.path.exists(d):
+        os.makedirs(d)
+    return d
+
 
 def subtitle_dir(sub_dir: str = ""):
     d = resource_dir(f"srt")
@@ -559,7 +570,7 @@ def cut_video(params, progress_callback=None):
         st.session_state['subclip_videos'] = subclip_videos
         for i, video_script in enumerate(video_script_list):
             try:
-                video_script['path'] = subclip_videos[i+1]
+                video_script['path'] = subclip_videos[i + 1]
             except KeyError as err:
                 logger.error(f"裁剪视频失败: {err}")
 

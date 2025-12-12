@@ -2,6 +2,9 @@ from app.record_platform.record_plat_base import Base
 from ab_sign import ab_sign
 import urllib, requests, json
 from webui.utils.global_params import VideoQuality
+import time
+from app.utils import utils
+import os
 
 
 class Douyin(Base):
@@ -27,6 +30,30 @@ class Douyin(Base):
             "web_rid": 0,
             'msToken': '',
         }
+
+        self.ffmpeg_command = [
+            'ffmpeg', "-y",
+            "-v", "verbose",
+            "-rw_timeout", "50000000",
+            "-loglevel", "error",
+            "-hide_banner",
+            "-user_agent", "Mozilla/5.0 (Linux; Android 11; SAMSUNG SM-G973U) AppleWebKit/537.36 ("
+                           "KHTML, like Gecko) SamsungBrowser/14.2 Chrome/87.0.4280.141 Mobile "
+                           "Safari/537.36",
+            "-protocol_whitelist", "rtmp,crypto,file,http,https,tcp,tls,udp,rtp,httpproxy",
+            "-thread_queue_size", "1024",
+            "-analyzeduration", "40000000",
+            "-probesize", "20000000",
+            "-fflags", "+discardcorrupt",
+            # "-re", "-i", real_url,
+            "-bufsize", "15000k",
+            "-sn", "-dn",
+            "-reconnect_delay_max", "60",
+            "-reconnect_streamed", "-reconnect_at_eof",
+            "-max_muxing_queue_size", "2048"
+                                      "-correct_ts_overflow", "1",
+            "-avoid_negative_ts", "1"
+        ]
 
     # 开始记录
     def start_record(self):
@@ -132,7 +159,7 @@ class Douyin(Base):
                 'quality': video_quality,
                 'm3u8_url': m3u8_url,
                 'flv_url': flv_url,
-                'record_url': m3u8_url or flv_url,
+                'record_url': m3u8_url,
             }
         return result
 
@@ -145,38 +172,35 @@ class Douyin(Base):
         except:
             return False
 
-    # 开始录像
-    def record_video(self, port_info):
-        user_agent = ("Mozilla/5.0 (Linux; Android 11; SAMSUNG SM-G973U) AppleWebKit/537.36 ("
-                                              "KHTML, like Gecko) SamsungBrowser/14.2 Chrome/87.0.4280.141 Mobile "
-                                              "Safari/537.36")
-        rw_timeout = "50000000"
-        analyzeduration = "40000000"
-        probesize = "20000000"
-        bufsize = "15000k"
-        max_muxing_queue_size = "2048"
+    # 开始flv录像
+    def record_ts_video(self, port_info):
+        # 真实URL
+        real_url = port_info["flv_url"]
+        # 主播名字
+        anchor_name = port_info["anchor_name"]
+        # 标题
+        record_title = port_info["title"]
+        # 保存路径
+        save_path = utils.record_video_dir()
+        now = time.strftime("%Y-%m-%d_%H-%M-%S", time.localtime())
+        save_file_path = os.path.join(save_path,anchor_name,record_title,now) + ".ts"
 
-        ffmpeg_command = [
-            'ffmpeg', "-y",
-            "-v", "verbose",
-            "-rw_timeout", rw_timeout,
-            "-loglevel", "error",
-            "-hide_banner",
-            "-user_agent", user_agent,
-            "-protocol_whitelist", "rtmp,crypto,file,http,https,tcp,tls,udp,rtp,httpproxy",
-            "-thread_queue_size", "1024",
-            "-analyzeduration", analyzeduration,
-            "-probesize", probesize,
-            "-fflags", "+discardcorrupt",
-            "-re", "-i", real_url,
-            "-bufsize", bufsize,
-            "-sn", "-dn",
-            "-reconnect_delay_max", "60",
-            "-reconnect_streamed", "-reconnect_at_eof",
-            "-max_muxing_queue_size", max_muxing_queue_size,
-            "-correct_ts_overflow", "1",
-            "-avoid_negative_ts", "1"
+        new_command = self.ffmpeg_command + ["-re", "-i", real_url]
+
+        save_file_path = f"{full_path}/{anchor_name}_{title_in_name}{now}_%03d.flv"
+        command = [
+            "-map", "0",
+            "-c:v", "copy",
+            "-c:a", "copy",
+            "-bsf:a", "aac_adtstoasc",
+            "-f", "segment",
+            "-segment_time", split_time,
+            "-segment_format", "flv",
+            "-reset_timestamps", "1",
+            save_file_path
         ]
+        new_command.extend(command)
+
 
 if __name__ == "__main__":
     test_data = {
