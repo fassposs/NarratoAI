@@ -6,7 +6,7 @@ from app.config import config
 from app.utils import utils
 from app.utils import ffmpeg_utils
 from webui.components import basic_settings, video_settings, audio_settings, subtitle_settings, script_settings, \
-    system_settings, del_video_subtitle
+    system_settings, del_video_subtitle, live_record
 from app.models.schema import VideoClipParams
 
 logger = None
